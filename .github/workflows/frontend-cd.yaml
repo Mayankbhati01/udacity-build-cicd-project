@@ -16,7 +16,7 @@ env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: frontend
   EKS_CLUSTER_NAME: cluster
-  REACT_APP_MOVIE_API_URL: http://add4d069de84f483ba114d3fe5c258ba-749399751.us-east-1.elb.amazonaws.com
+  REACT_APP_MOVIE_API_URL: http://afb7dd6a870d745deb980a3ca1cf4eb7-1864018069.us-east-1.elb.amazonaws.com
 
 jobs:
 
@@ -45,7 +45,6 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-
   test:
     name: Frontend Test
     runs-on: ubuntu-latest
@@ -72,7 +71,6 @@ jobs:
         run: npm test -- --watchAll=false
         env:
           CI: "true"
-
 
   deploy:
     name: Build and Deploy
