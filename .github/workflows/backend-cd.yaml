@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'starter/backend/**'
 
   workflow_dispatch:
 
@@ -16,6 +18,7 @@ env:
   EKS_CLUSTER_NAME: cluster
 
 jobs:
+
   lint:
     name: Backend Lint
     runs-on: ubuntu-latest
@@ -25,7 +28,7 @@ jobs:
         working-directory: starter/backend
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -42,6 +45,7 @@ jobs:
       - name: Run lint
         run: pipenv run lint
 
+
   test:
     name: Backend Test
     runs-on: ubuntu-latest
@@ -51,7 +55,7 @@ jobs:
         working-directory: starter/backend
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -68,6 +72,7 @@ jobs:
       - name: Run tests
         run: pipenv run test
 
+
   deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
@@ -77,7 +82,7 @@ jobs:
       - test
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials
@@ -130,4 +135,3 @@ jobs:
           kubectl get deployment backend
           kubectl get service backend
           kubectl get pods -l app=backend
-# Backend CD pull request

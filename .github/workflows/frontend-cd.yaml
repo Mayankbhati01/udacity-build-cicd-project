@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'starter/frontend/**'
 
   workflow_dispatch:
 
@@ -68,6 +70,8 @@ jobs:
 
       - name: Run tests
         run: npm test -- --watchAll=false
+        env:
+          CI: "true"
 
 
   deploy:
@@ -117,13 +121,21 @@ jobs:
             --region ${{ env.AWS_REGION }} \
             --name ${{ env.EKS_CLUSTER_NAME }}
 
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Update Kubernetes image
+        working-directory: starter/frontend/k8s
+        run: |
+          kustomize edit set image \
+            frontend=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
       - name: Deploy application to EKS
         run: |
           kubectl apply -k starter/frontend/k8s
 
-          kubectl set image deployment/frontend \
-            frontend=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-
+      - name: Verify Kubernetes deployment
+        run: |
           kubectl rollout status deployment/frontend --timeout=180s
 
       - name: Verify frontend service and pods
